@@ -1,7 +1,6 @@
 - 👋 Hi, I’m @Cappucin00
-- 👀 I’m interested in Web Development, Cybersecurity and Linux development
-- 🌱 I’m currently learning CSS, HTML, JavaScript, Python
-- 💞️ I’m looking to collaborate on ...
+- 👀 I’m interested in Web Development, Cybersecurity and Networking
+- 🌱 I’m currently learning Python, DataBase
 - 📫 How to reach me ralphbernabe18@gmai.com and my discord: Maekieee#7054
 - 😄 Pronouns: He/Him
 - ⚡ Fun fact: I love to learn things that is new to me and willing to do effort in everything.
