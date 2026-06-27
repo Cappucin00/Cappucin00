@@ -54,4 +54,141 @@ conf t
  int e0/0
   no shutdown
   ip add dhcp
+
+
   end
+
+
+
+
+
+----------- QUESTION ------------
+
+1. Design 751 offices for Comdata.com using the available network address 10.113.128.0/20. 
+Maximize the number of IP addresses.
+
+- For the 2nd office, 
+    assign the first valid IP on R4's e0/1 interface.
+    assign the last valid IP on P1's e0/1 interface.
+
+- For the 3rd office,
+    assign the first valid IP on R3's e0/1 interface.
+    assign the last valid IP on P2's e0/1 interface. 
+
+- For the 4th office,
+    assign the first valid IP on R2's e0/1 interface.
+    assign the last valid IP on S1's e0/1 interface. 
+
+- For the 5th office,
+    assign the first valid IP on R1's e0/1 interface.
+    assign the last valid IP on S2's e0/1 interface. 
+
+Answer:
+
+2nd Office:
+  NETWORK = 10.113.128.4 255.255.255.252
+  VALID RANGE:
+  - FIRST VALID IP = 10.113.128.5
+  - LAST VALID IP = 10.113.128.6
+  BROADCAST/LAST IP = 10.113.128.7
+
+  NOT NETWORK: (NOT 2nd Office) = 10.113.128.8 255.255.255.252
+
+3rd Office:
+  NETWORK = 10.113.128.8 255.255.255.252
+  VALID RANGE:
+  - FIRST VALID IP = 10.113.128.9
+  - LAST VALID IP = 10.113.128.10
+  BROADCAST/LAST IP = 10.113.128.11
+
+  NOT NETWORK: (NOT 3rd Office) = 10.113.128.12 255.255.255.252
+
+4th Office:
+  NETWORK = 10.113.128.12 255.255.255.252
+  VALID RANGE:
+  - FIRST VALID IP = 10.113.128.13
+  - LAST VALID IP = 10.113.128.14
+  BROADCAST/LAST IP = 10.113.128.15
+
+  NOT NETWORK: (NOT 4th Office) = 10.113.128.16 255.255.255.252
+
+5th Office:
+  NETWORK = 10.113.128.16 255.255.255.252
+  VALID RANGE:
+  - FIRST VALID IP = 10.113.128.17
+  - LAST VALID IP = 10.113.128.18
+  BROADCAST/LAST IP = 10.113.128.19
+
+  NOT NETWORK: (NOT 5th Office) = 10.113.128.20 255.255.255.252
+
+
+CODE:
+
+2nd Office:
+
+!@R4
+conf t
+ int e0/1
+  ip add 10.113.128.5 255.255.255.252
+  no shut
+  end
+
+!@P1
+conf t
+ int e0/1
+  ip add 10.113.128.6 255.255.255.252
+  no shut
+  end
+
+--
+
+3rd Office:
+
+!@R3
+conf t
+ int e0/1
+  ip add 10.113.128.9 255.255.255.252
+  no shut
+  end
+
+!@P2
+conf t
+ int e0/1
+  ip add 10.113.128.10 255.255.255.252
+  no shut
+  end
+
+--
+
+4th Office:
+
+!@R2
+conf t
+ int e0/1
+  ip add 10.113.128.13 255.255.255.252
+  no shut
+  end
+
+!@S1
+conf t
+ int e0/1
+  ip add 10.113.128.14 255.255.255.252
+  no shut
+  end
+
+--
+
+5th Office:
+
+!@R1
+conf t
+ int e0/1
+  ip add 10.113.128.17 255.255.255.252
+  no shut
+  end
+
+!@S2
+conf t
+ int e0/1
+  ip add 10.113.128.18 255.255.255.252
+  no shut
