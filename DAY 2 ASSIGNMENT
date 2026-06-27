@@ -1,0 +1,57 @@
+----------- QUESTION ------------
+
+Design and implement a network for Comdata.com with 2737 Data Analysts, Network Engineers, and Incident Responders. 
+- Use the available IP address space 172.31.128.0/18
+- Reserve the first 100 IP addresses of the network.
+- Set the network for VLAN 87.
+- D1 must be the DHCP server.
+- P1 must be the DHCP client.
+ 
+
+----------- COMPUTE ------------
+
+Convert: 2737 = 12 bits
+Subtract: 32 - 12 = /20 = (3rd, 16i)
+Ipasok: Ipasok 16i sa 3rd octet = 172.31.144.0/20
+
+--
+
+Network IP: (Comdata.com) = 172.31.144.0 255.255.240.0
+Valid Range:
+- First Valid IP = 172.31.144.1
+- Last Valid IP = 172.31.159.254
+Broadcast/Last IP = 172.31.159.255
+
+NOT Network: (NOT Comdata.com) = 172.31.160.0 255.255.240.0
+
+
+!@D1
+conf t
+ vlan 87
+  name Comdata.com
+  exit
+ interface vlan 87
+  ip address 172.31.144.1 255.255.240.0
+  no shutdown
+  exit
+ ip dhcp pool Comdata.com
+  network 172.31.144.0 255.255.240.0
+  default-router 172.31.144.1
+  domain-name Comdata.com
+  end
+
+
+!@A1
+conf t
+ int e0/0
+  switchport mode access
+  switchport access vlan 87
+  end
+
+
+!@P1
+conf t
+ int e0/0
+  no shutdown
+  ip add dhcp
+  end
