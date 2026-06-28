@@ -598,3 +598,35 @@ end
 conf t
  ipv6 route ::/0 2001:db8:abcd::2
  end
+network:3rd site
+fd00:0002:0000:0000:0000:0010:0000:0000/93
+1st valid:fd00:2::10:0:1/93
+last valid:fd00:2::17:FFFF:FFFF/93
+Not Network: fd00:0002:0000:0000:0000:0018:0000:0000/93
+
+18 depts
+/115
+
+fd00:0003:0000:0000:0000:0000:0000:0000/120
+ANSWER: fd00:0003:0000:0000:0000:0000:0000:0100/120
+net 2nd department: fd00:3::100/120
+1st valid: fd00:3::101/120
+last valid: fd00:3::1FF/120
+not network:fd00:3::200/120
+
+
+!@R4
+conf t
+ ipv6 unicast-routing
+ int e0/0
+ ipv6 add fd00:3::101/120
+ no shut
+end
+
+!@I4
+conf t
+ ipv6 unicast-routing
+ int e0/0
+ ipv6 add fd00:3::1FF/120
+ no shut
+end
