@@ -171,11 +171,23 @@ conf t
 end
 ------------
 Default gateway
+!@P1
+conf t
+ ip route 0.0.0.0 0.0.0.0 10.2.1.1 
+ end
+
+!@P2
+conf t
+ ip route 0.0.0.0 0.0.0.0 10.2.1.2 
+ end
+
+Default gateway
 !@A1
 conf t
  ip route 0.0.0.0 0.0.0.0 192.168.1.129 1
  ip route 0.0.0.0 0.0.0.0 192.168.1.130 10
  end
+
 
 ----------
 !@A2
@@ -341,6 +353,219 @@ conf t
   ip ospf priority 0
   end
 
+
+
+Practice
+----------
+
+config t
+ router eigrp 100
+  no auto-summary
+  network 10.46.187.22/32
+  network 10.0.15.90/27
+ 		(4th,32i) .64/27
+
+192.168.0.154/30 .152/30
+	(4th,4i)
+
+
+config t
+ router eigrp 100
+  no auto-summary
+  network 10.46.187.22 0.0.0.0
+  network 10.0.15.64 0.0.0.31
+  network 192.168.0.152 0.0.0.3
+end
+
+OSPF
+
+conf t
+ router ospf 1
+  router-id 2.2.2.2
+ network 10.46.187.22 0.0.0.0 area 0
+  network 10.0.15.64 0.0.0.31 area 0
+  network 192.168.0.152 0.0.0.3 area 0
+  end
+
+------------------
+NEIGH VS ADJACENCY
+
+TASK
+Mismatch
+
+!@r3
+conf t
+ int e1/2
+  no ip ospf network point-to-point
+  end
+show ip ospf neighbor
+clear ip ospf process
+yes
+
+@!R4 & R3
+show ip ospf int e1/2
+
+-------------------
+### OSPF & EIGRP Redistribution
+~~~
+!@R4
+config T
+ router eigrp 100
+  redistribute ospf 1 metric 10000 100 255 1 1500
+  exit
+ router ospf 1
+  redistribute eigrp 100 subnets
+end
+
+----------------------------
+### BGP
+Hurrican AS Number
+- Globe
+- PLDT
+- Converge
+
+<br>
+
+R1 = ASN 1  
+I1 & I4(GOOGLE DNS) = ASN 45  
+I2 = ASN 2  
+I3 = ASN 1  
+
+<br>
+<br>
+
+~~~
+!@R1
+conf t
+ router bgp 1
+  bgp log-neighbor-changes
+   neighbor 208.8.8.4 remote-as 45
+   neighbor 207.7.7.2 remote-as 2
+   neighbor 209.9.9.3 remote-as 3
+   address-family ipv4
+	neighbor 208.8.8.4 activate
+    neighbor 207.7.7.2 activate
+    neighbor 209.9.9.3 activate
+    network 207.7.7.0 mask 255.255.255.0
+    network 208.8.8.0 mask 255.255.255.0
+    network 209.9.9.0 mask 255.255.255.0
+    end
+~~~
+
+~~~
+!@I1 - CONVERGE
+conf t
+ router bgp 45
+  bgp log-neighbor-changes
+  neighbor 24.2.4.2 remote-as 2
+  neighbor 45.4.5.5 remote-as 45
+  neighbor 208.8.8.1 remote-as 1
+  address-family ipv4
+   neighbor 24.2.4.2 activate
+   neighbor 45.4.5.5 activate
+   neighbor 208.8.8.1 activate
+   network 208.8.8.0 mask 255.255.255.0
+   network 24.2.4.0 mask 255.255.255.0
+   network 44.44.44.44 mask 255.255.255.255
+   network 45.4.5.0 mask 255.255.255.0
+   end
+~~~
+!@I2 - PLDT
+config t
+ router bgp 2
+ bgp log-neighbor-changes
+ neighbor 24.2.4.4 remote-as 45
+ neighbor 25.2.5.5 remote-as 45
+ neighbor 32.3.2.3 remote-as 3
+ neighbor 207.7.7.1 remote-as 1
+ address-family ipv4
+  neighbor 24.2.4.4 activate
+  neighbor 25.2.5.5 activate
+  neighbor 32.3.2.3 activate
+  neighbor 207.7.7.1 activate
+  network 207.7.7.0 mask 255.255.255.0
+  network 22.22.22.22 mask 255.255.255.255
+  network 24.2.4.0 mask 255.255.255.0
+  network 25.2.5.0 mask 255.255.255.0
+  network 32.3.2.0 mask 255.255.255.0
+  end
+
+!@I3 - GLOBE
+conf t
+ router bgp 3
+  bgp log-neighbor-changes
+  neighbor 32.3.2.2 remote-as 2
+  neighbor 35.3.5.5 remote-as 45
+  neighbor 209.9.9.1 remote-as 1
+  address-family ipv4
+   neighbor 32.3.2.2 activate
+   neighbor 35.3.5.5 activate
+   neighbor 209.9.9.1 activate
+   network 209.9.9.0 mask 255.255.255.0
+   network 32.3.2.0 mask 255.255.255.0
+   network 33.33.33.33 mask 255.255.255.255
+   network 35.3.5.0 mask 255.255.255.0
+   end
+
+
+!@I4 - GOOGLE
+config t
+ router bgp 45
+  bgp log-neighbor-changes
+  neighbor 25.2.5.2 remote-as 2
+  neighbor 35.3.5.3 remote-as 3
+  neighbor 45.4.5.4 remote-as 45
+  address-family ipv4
+   neighbor 25.2.5.2 activate
+   neighbor 35.3.5.3 activate
+   neighbor 45.4.5.4 activate
+   network 8.8.8.8 mask 255.255.255.255
+   network 55.55.55.55 mask 255.255.255.255
+   network 25.2.5.0 mask 255.255.255.0
+   network 35.3.5.0 mask 255.255.255.0
+   network 45.4.5.0 mask 255.255.255.0
+   end
+<br>
+<br>
+
+--------------------
+### BGP - OSPF Redistribution (Default Route Propagation)
+~~~
+!@R1
+conf t
+ router ospf 1
+  default-information originate always
+  end
+
+------------------------------------
+config NAT
+
+Step 1
+
+!@R1
+conf t
+ int e1/0 
+ ip nat inside
+ interface range e1/1-3 
+ ip nat outside
+end
+
+Step 2 1:1 NAT
+
+!@R1 
+conf t
+ ip nat inside source static 10.1.1.10 209.9.9.10
+end
+
+Step 3 1:Many
+
+!@R1
+conf t
+ access-list 1 permit 10.0.0.0 0.255.255.255
+ access-list 1 permit 172.16.0.0 0.15.255.255
+ access-list 1 permit 192.168.0.0 0.0.255.255
+ ip nat inside source list 1 int e1/2 overload
+ end
 
 
 
